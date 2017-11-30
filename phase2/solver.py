@@ -1,7 +1,8 @@
 import argparse
 import random
 import numpy as np
-
+from collections import defaultdict
+import operator
 
 """
 ======================================================================
@@ -22,19 +23,43 @@ def solve(num_wizards, num_constraints, wizards, constraints):
     Output:
         An array of wizard names in the ordering your algorithm returns
     """
-    def count_invalid_constraints(partial_ordering):
+
+    def map_wiz_to_index(partial_ordering):
         mapping = {}
-        count = 0
-        for i, wiz in zip(range(num_wizards), partial_ordering):
+        for i, wiz in enumerate(partial_ordering):
             mapping[wiz] = i
+
+        return mapping
+
+    def count_invalid_constraints(partial_ordering):
+        wiz_to_invalid = map_wiz_to_invalid_constraint(partial_ordering)
+        count = sum(wiz_to_invalid.values())
+        return count/3
+
+    def map_wiz_to_invalid_constraint(partial_ordering):
+        wiz_to_index = map_wiz_to_index(partial_ordering)
+
+        mapping = defaultdict(int)
+    
         for constraint in constraints:
             w1, w2, w3 = constraint[0], constraint[1], constraint[2]
-            i, j, k = mapping[w1], mapping[w2], mapping[w3]
+            i, j, k = wiz_to_index[w1], wiz_to_index[w2], wiz_to_index[w3]
             if (k > i and k < j) or (k < i and k > j):
-                count += 1
+                mapping[w1] += 1
+                mapping[w2] += 1
+                mapping[w3] += 1
+        return mapping
 
-        return count
+    def get_most_invalid_wiz(partial_ordering):
+        #get mapping from wiz to num invalid
+        wiz_to_invalid = map_wiz_to_invalid_constraint(partial_ordering)
 
+        #get wiz with max invalid count 
+        max_wiz = max(wiz_to_invalid.iteritems(), key=operator.itemgetter(1))[0]
+
+        return max_wiz
+
+        
     best = wizards
     best_invalid = count_invalid_constraints(wizards)
     print ("num constraints", num_constraints)
