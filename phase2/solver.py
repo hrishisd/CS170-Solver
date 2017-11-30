@@ -55,7 +55,7 @@ def solve(num_wizards, num_constraints, wizards, constraints):
         wiz_to_invalid = map_wiz_to_invalid_constraint(partial_ordering)
 
         #get wiz with max invalid count 
-        max_wiz = max(wiz_to_invalid.iteritems(), key=operator.itemgetter(1))[0]
+        max_wiz = max(wiz_to_invalid.items(), key=operator.itemgetter(1))[0]
 
         return max_wiz
 
@@ -63,21 +63,25 @@ def solve(num_wizards, num_constraints, wizards, constraints):
         """
         returns a better ordering from 1 swap
         """
-        max_wiz = get_most_invalid_wiz(partial_ordering)
-        bad_wiz_index = partial_ordering.index(max_wiz)
+
+        #Pick a random wizard
+       # max_wiz = get_most_invalid_wiz(partial_ordering)
+        rand_wiz = random.choice(partial_ordering)
+        bad_wiz_index = partial_ordering.index(rand_wiz)
         curr_num_invalid = count_invalid_constraints(partial_ordering)
+
         for i in range(num_wizards):
             if i == bad_wiz_index:
                 pass
             partial_ordering[i], partial_ordering[bad_wiz_index] = partial_ordering[bad_wiz_index], partial_ordering[i]
             if count_invalid_constraints(partial_ordering) < curr_num_invalid:
-                return list(partial_ordering)
+                curr_num_invalid = count_invalid_constraints(partial_ordering)
             else:
-                partial_ordering[i], partial_ordering[bad_wiz_index] = partial_ordering[bad_wiz_index], partial_ordering[i] 
+                partial_ordering[i], partial_ordering[bad_wiz_index] = partial_ordering[bad_wiz_index], partial_ordering[i]
+
         return list(partial_ordering)
 
     #def random_update(partial_ordering):
-
 
 
     best = wizards
@@ -92,7 +96,7 @@ def solve(num_wizards, num_constraints, wizards, constraints):
             best_invalid = curr_invalid
             best = temp
             print(best_invalid)
-            print best
+            print (best)
 
         if best_invalid == 0:
             break
@@ -102,7 +106,7 @@ def solve(num_wizards, num_constraints, wizards, constraints):
     while (best_invalid > 10):
         updated_ordering = update(updated_ordering)
         curr_num_invalid = count_invalid_constraints(updated_ordering)
-        print curr_num_invalid
+        print (curr_num_invalid)
         if curr_num_invalid == prev_num_invalid:
             pass
 
