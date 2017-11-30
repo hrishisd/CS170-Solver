@@ -59,12 +59,32 @@ def solve(num_wizards, num_constraints, wizards, constraints):
 
         return max_wiz
 
-        
+    def update(partial_ordering):
+        """
+        returns a better ordering from 1 swap
+        """
+        max_wiz = get_most_invalid_wiz(partial_ordering)
+        bad_wiz_index = partial_ordering.index(max_wiz)
+        curr_num_invalid = count_invalid_constraints(partial_ordering)
+        for i in range(num_wizards):
+            if i == bad_wiz_index:
+                pass
+            partial_ordering[i], partial_ordering[bad_wiz_index] = partial_ordering[bad_wiz_index], partial_ordering[i]
+            if count_invalid_constraints(partial_ordering) < curr_num_invalid:
+                return list(partial_ordering)
+            else:
+                partial_ordering[i], partial_ordering[bad_wiz_index] = partial_ordering[bad_wiz_index], partial_ordering[i] 
+        return list(partial_ordering)
+
+    #def random_update(partial_ordering):
+
+
+
     best = wizards
     best_invalid = count_invalid_constraints(wizards)
     print ("num constraints", num_constraints)
     print("init invalid", best_invalid)
-    while(best_invalid > 10):
+    while(best_invalid > 100):
         temp = np.random.permutation(wizards)
         curr_invalid = count_invalid_constraints(temp)
         #print(curr_invalid)
@@ -77,10 +97,21 @@ def solve(num_wizards, num_constraints, wizards, constraints):
         if best_invalid == 0:
             break
 
+    updated_ordering = best.tolist()
+    prev_num_invalid = count_invalid_constraints(updated_ordering)
+    while (best_invalid > 10):
+        updated_ordering = update(updated_ordering)
+        curr_num_invalid = count_invalid_constraints(updated_ordering)
+        print curr_num_invalid
+        if curr_num_invalid == prev_num_invalid:
+            pass
+
+        prev_num_invalid = curr_num_invalid
+
 
 
     #print(constraints, constraints)
-    return best
+    return updated_ordering
 
 """
 ======================================================================
