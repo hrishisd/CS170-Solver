@@ -25,7 +25,7 @@ def solve(num_wizards, num_constraints, wizards, constraints):
     def count_invalid_constraints(partial_ordering):
         mapping = {}
         count = 0
-        for i, wiz in zip(range(num_wizards), wizards):
+        for i, wiz in zip(range(num_wizards), partial_ordering):
             mapping[wiz] = i
         for constraint in constraints:
             w1, w2, w3 = constraint[0], constraint[1], constraint[2]
@@ -42,11 +42,12 @@ def solve(num_wizards, num_constraints, wizards, constraints):
     while(best_invalid > 10):
         temp = np.random.permutation(wizards)
         curr_invalid = count_invalid_constraints(temp)
-        print(curr_invalid)
+        #print(curr_invalid)
         if (curr_invalid < best_invalid):
             best_invalid = curr_invalid
             best = temp
             print(best_invalid)
+            print best
 
         if best_invalid == 0:
             break
