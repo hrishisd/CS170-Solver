@@ -16,7 +16,7 @@ def solve(num_wizards, num_constraints, wizards, constraints):
         num_wizards: Number of wizards
         num_constraints: Number of constraints
         wizards: An array of wizard names, in no particular order
-        constraints: A 2D-array of constraints, 
+        constraints: A 2D-array of constraints,
                      where constraints[0] may take the form ['A', 'B', 'C']i
 
     Output:
@@ -47,7 +47,7 @@ def solve(num_wizards, num_constraints, wizards, constraints):
             best_invalid = curr_invalid
             best = temp
             print(best_invalid)
-            print best
+            print(best)
 
         if best_invalid == 0:
             break
@@ -74,7 +74,7 @@ def read_input(filename):
             constraints.append(c)
             for w in c:
                 wizards.add(w)
-                
+
     wizards = list(wizards)
     return num_wizards, num_constraints, wizards, constraints
 
