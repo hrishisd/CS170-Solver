@@ -65,10 +65,15 @@ def solve(num_wizards, num_constraints, wizards, constraints):
         """
 
         #Pick a random wizard
-       # max_wiz = get_most_invalid_wiz(partial_ordering)
-        rand_wiz = random.choice(partial_ordering)
-        bad_wiz_index = partial_ordering.index(rand_wiz)
-        curr_num_invalid = count_invalid_constraints(partial_ordering)
+        max_wiz = get_most_invalid_wiz(partial_ordering)
+
+        #rand_wiz = random.choice(partial_ordering)
+
+        bad_wiz_index = partial_ordering.index(max_wiz)
+
+        initial_num_invalid = count_invalid_constraints(partial_ordering)
+
+        curr_num_invalid = initial_num_invalid
 
         for i in range(num_wizards):
             if i == bad_wiz_index:
@@ -76,13 +81,27 @@ def solve(num_wizards, num_constraints, wizards, constraints):
             partial_ordering[i], partial_ordering[bad_wiz_index] = partial_ordering[bad_wiz_index], partial_ordering[i]
             if count_invalid_constraints(partial_ordering) < curr_num_invalid:
                 curr_num_invalid = count_invalid_constraints(partial_ordering)
+                bad_wiz_index = i
             else:
                 partial_ordering[i], partial_ordering[bad_wiz_index] = partial_ordering[bad_wiz_index], partial_ordering[i]
 
+        if (curr_num_invalid == initial_num_invalid):
+            rand_wiz = random.choice(partial_ordering)
+            rand_wiz_index = partial_ordering.index(rand_wiz)
+            for i in range(num_wizards):
+                if i == rand_wiz_index:
+                    pass
+                partial_ordering[i], partial_ordering[rand_wiz_index] = partial_ordering[rand_wiz_index], \
+                                                                       partial_ordering[i]
+                if count_invalid_constraints(partial_ordering) < curr_num_invalid:
+                    curr_num_invalid = count_invalid_constraints(partial_ordering)
+                    rand_wiz_index = i
+                else:
+                    partial_ordering[i], partial_ordering[rand_wiz_index] = partial_ordering[rand_wiz_index], \
+                                                                           partial_ordering[i]
         return list(partial_ordering)
 
     #def random_update(partial_ordering):
-
 
     best = wizards
     best_invalid = count_invalid_constraints(wizards)
@@ -103,7 +122,7 @@ def solve(num_wizards, num_constraints, wizards, constraints):
 
     updated_ordering = best.tolist()
     prev_num_invalid = count_invalid_constraints(updated_ordering)
-    while (best_invalid > 10):
+    while (prev_num_invalid > 10):
         updated_ordering = update(updated_ordering)
         curr_num_invalid = count_invalid_constraints(updated_ordering)
         print (curr_num_invalid)
