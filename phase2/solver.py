@@ -1,8 +1,10 @@
+from random import random
 import argparse
 import random
 import numpy as np
 from collections import defaultdict
 import operator
+import math
 
 """
 ======================================================================
@@ -23,6 +25,47 @@ def solve(num_wizards, num_constraints, wizards, constraints):
     Output:
         An array of wizard names in the ordering your algorithm returns
     """
+
+    def generate_neighbor(ordering):
+        i, j = random.sample(range(num_wizards), k=2)
+        new_ordering = list(ordering)
+        new_ordering[i], new_ordering[j] = new_ordering[j], new_ordering[i]
+        return new_ordering
+    
+    def cost(ordering):
+        #TODO: can speed this up
+        return count_invalid_constraints(ordering)
+
+    def acceptance_probability(old_cost, new_cost, T):
+        exponent = (old_cost - new_cost)/T
+        try:
+            ans = math.exp(exponent)
+        except OverflowError:
+            #print "overflow for exponent =", exponent
+            if exponent > 0:
+                ans = 0
+            else:
+                ans = 1
+        return ans
+
+    def anneal(solution):
+        old_cost = cost(solution)
+        T = 1.0
+        T_min = 0.00001
+        alpha = 0.9
+        while T > T_min:
+            i = 1
+            while i <= 100:
+                new_solution = generate_neighbor(solution)
+                new_cost = cost(new_solution)
+                ap = acceptance_probability(old_cost, new_cost, T)
+                if ap > random.random():
+                    solution = new_solution
+                    old_cost = new_cost
+                    #print new_cost
+                i += 1
+            T = T*alpha
+        return solution, old_cost
 
     def map_wiz_to_index(partial_ordering):
         mapping = {}
@@ -80,38 +123,49 @@ def solve(num_wizards, num_constraints, wizards, constraints):
 
 
 
-    best = wizards
-    best_invalid = count_invalid_constraints(wizards)
-    print ("num constraints", num_constraints)
-    print("init invalid", best_invalid)
-    while(best_invalid > 100):
-        temp = np.random.permutation(wizards)
-        curr_invalid = count_invalid_constraints(temp)
-        #print(curr_invalid)
-        if (curr_invalid < best_invalid):
-            best_invalid = curr_invalid
-            best = temp
-            print(best_invalid)
-            print best
+    # best = wizards
+    # best_invalid = count_invalid_constraints(wizards)
+    # print ("num constraints", num_constraints)
+    # print("init invalid", best_invalid)
+    # while(best_invalid > 100):
+    #     temp = np.random.permutation(wizards)
+    #     curr_invalid = count_invalid_constraints(temp)
+    #     #print(curr_invalid)
+    #     if (curr_invalid < best_invalid):
+    #         best_invalid = curr_invalid
+    #         best = temp
+    #         print(best_invalid)
+    #         print best
 
-        if best_invalid == 0:
-            break
+    #     if best_invalid == 0:
+    #         break
 
-    updated_ordering = best.tolist()
-    prev_num_invalid = count_invalid_constraints(updated_ordering)
-    while (best_invalid > 10):
-        updated_ordering = update(updated_ordering)
-        curr_num_invalid = count_invalid_constraints(updated_ordering)
-        print curr_num_invalid
-        if curr_num_invalid == prev_num_invalid:
-            pass
+    # updated_ordering = best.tolist()
+    # prev_num_invalid = count_invalid_constraints(updated_ordering)
+    # while (best_invalid > 10):
+    #     updated_ordering = update(updated_ordering)
+    #     curr_num_invalid = count_invalid_constraints(updated_ordering)
+    #     print curr_num_invalid
+    #     if curr_num_invalid == prev_num_invalid:
+    #         pass
 
-        prev_num_invalid = curr_num_invalid
+    #     prev_num_invalid = curr_num_invalid
 
 
 
-    #print(constraints, constraints)
-    return updated_ordering
+    # #print(constraints, constraints)
+    # return updated_ordering
+    #for _ in range()
+
+    best_solution, best_cost = anneal(wizards)
+    print best_cost
+    while best_cost > 0:
+        random.shuffle(wizards)
+        curr_solution, curr_cost = anneal(wizards)
+        if curr_cost < best_cost:
+            best_solution, best_cost = curr_solution, curr_cost
+            print curr_cost
+    return best_solution
 
 """
 ======================================================================
