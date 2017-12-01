@@ -28,9 +28,11 @@ def solve(num_wizards, num_constraints, wizards, constraints):
     """
 
     def generate_neighbor(ordering):
-        i, j = random.sample(range(num_wizards), k=2)
+        num_swaps = np.random.geometric(.5)
         new_ordering = list(ordering)
-        new_ordering[i], new_ordering[j] = new_ordering[j], new_ordering[i]
+        for _ in xrange(num_swaps):
+            i, j = random.sample(xrange(num_wizards), k=2)
+            new_ordering[i], new_ordering[j] = new_ordering[j], new_ordering[i]
         return new_ordering
     
     def cost(ordering):
@@ -38,7 +40,7 @@ def solve(num_wizards, num_constraints, wizards, constraints):
         return count_invalid_constraints(ordering)
 
     def acceptance_probability(old_cost, new_cost, T):
-        exponent = (old_cost - new_cost)/T
+        exponent = (old_cost - new_cost)/(500*T)
         try:
             ans = math.exp(exponent)
         except OverflowError:
@@ -167,6 +169,7 @@ def solve(num_wizards, num_constraints, wizards, constraints):
         if curr_cost < best_cost:
             best_solution, best_cost = curr_solution, curr_cost
             print curr_cost
+            print best_solution
 
     print("--- %s seconds ---" % (time.time()-start_time))
     return best_solution
