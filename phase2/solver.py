@@ -5,6 +5,7 @@ import numpy as np
 from collections import defaultdict
 import operator
 import math
+import time
 
 """
 ======================================================================
@@ -156,7 +157,8 @@ def solve(num_wizards, num_constraints, wizards, constraints):
     # #print(constraints, constraints)
     # return updated_ordering
     #for _ in range()
-
+    start_time = time.time()
+    
     best_solution, best_cost = anneal(wizards)
     print best_cost
     while best_cost > 0:
@@ -165,6 +167,8 @@ def solve(num_wizards, num_constraints, wizards, constraints):
         if curr_cost < best_cost:
             best_solution, best_cost = curr_solution, curr_cost
             print curr_cost
+
+    print("--- %s seconds ---" % (time.time()-start_time))
     return best_solution
 
 """
