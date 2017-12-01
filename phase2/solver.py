@@ -190,8 +190,11 @@ def solve(num_wizards, num_constraints, wizards, constraints):
         curr_solution, curr_cost = anneal(wizards)
         if curr_cost < best_cost:
             best_solution, best_cost = curr_solution, curr_cost
-            print("\n",best_cost,"")
-            [print(wiz + " ", end=" ") for wiz in best_solution]
+            print(best_cost)
+            #Print out new Best solution
+            for wiz in best_solution:
+                print(wiz, end=" ")
+            print("\n")
     return best_solution
 
 
