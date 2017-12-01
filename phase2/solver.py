@@ -184,13 +184,14 @@ def solve(num_wizards, num_constraints, wizards, constraints):
     #for _ in range()
 
     best_solution, best_cost = anneal(wizards)
-    print best_cost
+    print (best_cost)
     while best_cost > 0:
         random.shuffle(wizards)
         curr_solution, curr_cost = anneal(wizards)
         if curr_cost < best_cost:
             best_solution, best_cost = curr_solution, curr_cost
-            print curr_cost
+            print("\n",best_cost,"")
+            [print(wiz + " ", end=" ") for wiz in best_solution]
     return best_solution
 
 
